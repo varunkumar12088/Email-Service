@@ -1,0 +1,8 @@
+spring:
+  application.name: Email-Service
+
+database:
+  name: email-service
+
+
+debug: true
