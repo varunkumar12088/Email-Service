@@ -1,4 +1,4 @@
-package com.academy.email;
+package com.academy.email.controller;
 
 import com.academy.email.dto.EmailDTO;
 import com.academy.email.service.EmailService;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/emails")
 public class EmailController {
 
-    //LOgger
      private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
 
     @Autowired

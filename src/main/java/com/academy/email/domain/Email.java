@@ -26,5 +26,6 @@ public class Email {
     private Map<String, Object> templateVariables;
     private String applicationName;
     private Status status; // e.g., SENT, FAILED, PENDING
+    private String templateId; // Reference to EmailTemplate
 
 }

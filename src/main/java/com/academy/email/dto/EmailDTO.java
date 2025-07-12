@@ -2,11 +2,13 @@ package com.academy.email.dto;
 
 import com.academy.email.domain.Email;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Map;
 
 @Data
+@ToString
 public class EmailDTO {
 
     private String to;
@@ -20,6 +22,7 @@ public class EmailDTO {
     private byte[] attachmentData;
     private Map<String, Object> templateVariables;
     private String applicationName;
+    private String templateId;
 
     public Email toEmail() {
          Email email = Email.builder()
@@ -34,6 +37,7 @@ public class EmailDTO {
                  .attachmentData(attachmentData)
                  .templateVariables(templateVariables)
                  .applicationName(applicationName)
+                 .templateId(templateId)
                  .build();
         return email;
     }

@@ -44,11 +44,12 @@ public class ValidationServiceImpl implements ValidationService {
                 "Email subject cannot be empty"
             );
         }
-        if (StringUtils.isBlank(emailDTO.getBody())) {
-            LOGGER.error("Email body is missing");
+
+        if (StringUtils.isBlank(emailDTO.getTemplateId())) {
+           LOGGER.error("Email template ID is missing, using default template");
             exception.addInvalidField(
-                "body",
-                "Email body cannot be empty"
+                    "templateId",
+                    "Email template ID is missing, using default template. Please provide a valid template ID."
             );
         }
         if (exception.hasInvalidFields()) {

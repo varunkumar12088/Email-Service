@@ -2,13 +2,16 @@ package com.academy.email.service.impl;
 
 import com.academy.email.constant.EmailConstant;
 import com.academy.email.domain.Email;
+import com.academy.email.domain.EmailTemplate;
 import com.academy.email.domain.Status;
 import com.academy.email.dto.EmailDTO;
 import com.academy.email.exception.EmailSendException;
 import com.academy.email.repository.EmailRepository;
 import com.academy.email.service.EmailService;
+import com.academy.email.service.EmailTemplateService;
 import com.academy.email.service.ValidationService;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -36,12 +40,20 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private ValidationService validationService;
+    @Autowired
+    private EmailTemplateService emailTemplateService;
 
 
     @Override
     public String sendEmail(EmailDTO emailDTO) {
         LOGGER.info("Sending email to: {}", emailDTO.getTo());
         validationService.isValidRequest(emailDTO);
+        // get template by ID or name
+        String emailTemplate = emailTemplateService.getEmailTemplateById(emailDTO.getTemplateId());
+        LOGGER.debug("Using email template: {}", emailTemplate);
+        if(StringUtils.isNotBlank(emailTemplate)) {
+            emailDTO.setBody(emailTemplate);
+        }
         // Save email to repository
         Email email = emailDTO.toEmail();
         email.setId(UUID.randomUUID().toString());
@@ -51,11 +63,14 @@ public class EmailServiceImpl implements EmailService {
         try {
             Context context = new Context();
             context.setVariables(emailDTO.getTemplateVariables());
+            LOGGER.debug("Template variables for email: {}", context.getVariableNames());
             String body = templateEngine.process(emailDTO.getBody(), context);
+            LOGGER.debug("Processed email body: {}", body);
 
             MimeMessage message = mailSender.createMimeMessage();
             message.setFrom(emailDTO.getFrom());
             message.setRecipients(MimeMessage.RecipientType.TO, emailDTO.getTo());
+
             if (!CollectionUtils.isEmpty(emailDTO.getCc())) {
                 message.setRecipients(MimeMessage.RecipientType.CC, String.join(EmailConstant.COMMA, emailDTO.getCc()));
             }
@@ -76,5 +91,11 @@ public class EmailServiceImpl implements EmailService {
             emailRepository.save(email);
             throw new EmailSendException("Failed to send email to "+ emailDTO.getTo());
         }
+    }
+
+    private String getBody(Map<String, Object> map) {
+        // This method can be used to get the body of the email
+        // It can be implemented based on your requirements
+        return "";
     }
 }
