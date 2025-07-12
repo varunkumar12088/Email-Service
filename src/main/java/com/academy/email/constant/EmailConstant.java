@@ -14,4 +14,5 @@ public interface EmailConstant {
     String EMAIL_DEBUG = "mail.debug";
     String UTF_8 = "UTF-8";
     String HTML = "html";
+    String COMMA = ",";
 }

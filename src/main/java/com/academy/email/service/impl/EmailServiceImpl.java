@@ -41,10 +41,10 @@ public class EmailServiceImpl implements EmailService {
             message.setFrom(emailDTO.getFrom());
             message.setRecipients(MimeMessage.RecipientType.TO, emailDTO.getTo());
             if (!CollectionUtils.isEmpty(emailDTO.getCc())) {
-                message.setRecipients(MimeMessage.RecipientType.CC, String.join(",", emailDTO.getCc()));
+                message.setRecipients(MimeMessage.RecipientType.CC, String.join(EmailConstant.COMMA, emailDTO.getCc()));
             }
             if (!CollectionUtils.isEmpty(emailDTO.getBcc())) {
-                message.setRecipients(MimeMessage.RecipientType.BCC, String.join(",", emailDTO.getBcc()));
+                message.setRecipients(MimeMessage.RecipientType.BCC, String.join(EmailConstant.COMMA, emailDTO.getBcc()));
             }
             message.setSubject(emailDTO.getSubject());
             message.setText(body, EmailConstant.UTF_8, EmailConstant.HTML);
