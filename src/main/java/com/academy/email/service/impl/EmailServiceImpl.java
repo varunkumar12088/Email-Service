@@ -2,7 +2,6 @@ package com.academy.email.service.impl;
 
 import com.academy.email.constant.EmailConstant;
 import com.academy.email.domain.Email;
-import com.academy.email.domain.EmailTemplate;
 import com.academy.email.domain.Status;
 import com.academy.email.dto.EmailDTO;
 import com.academy.email.exception.EmailSendException;
@@ -11,19 +10,19 @@ import com.academy.email.service.EmailService;
 import com.academy.email.service.EmailTemplateService;
 import com.academy.email.service.ValidationService;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -32,9 +31,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
-    @Autowired
-    @Qualifier("stringTemplateEngine")
-    private TemplateEngine templateEngine;
+
     @Autowired
     private EmailRepository emailRepository;
 
@@ -61,10 +58,8 @@ public class EmailServiceImpl implements EmailService {
         emailRepository.save(email);
 
         try {
-            Context context = new Context();
-            context.setVariables(emailDTO.getTemplateVariables());
-            LOGGER.debug("Template variables for email: {}", context.getVariableNames());
-            String body = templateEngine.process(emailDTO.getBody(), context);
+
+            String body = getBody(emailDTO.getTemplateVariables(), emailDTO.getBody());
             LOGGER.debug("Processed email body: {}", body);
 
             MimeMessage message = mailSender.createMimeMessage();
@@ -93,9 +88,16 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    private String getBody(Map<String, Object> map) {
-        // This method can be used to get the body of the email
-        // It can be implemented based on your requirements
-        return "";
+    private String getBody(Map<String, Object> map, String template){
+        if (StringUtils.isNotBlank(template)) {
+           for(Map.Entry<String, Object> entry : map.entrySet()){
+               if(ObjectUtils.isNotEmpty(entry.getValue())){
+                   template = template.replaceAll(
+                           Pattern.quote("${" + entry.getKey() + "}"),
+                           entry.getValue().toString());
+               }
+           }
+        }
+        return template;
     }
 }
