@@ -5,4 +5,6 @@ database:
   name: email-service
 
 
-debug: true
+#debug: true
+
+server.port: 8085

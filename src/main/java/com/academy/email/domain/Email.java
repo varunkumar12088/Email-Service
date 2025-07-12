@@ -25,5 +25,6 @@ public class Email {
     private byte[] attachmentData;
     private Map<String, Object> templateVariables;
     private String applicationName;
+    private Status status; // e.g., SENT, FAILED, PENDING
 
 }

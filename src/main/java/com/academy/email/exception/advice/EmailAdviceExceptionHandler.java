@@ -19,7 +19,7 @@ public class EmailAdviceExceptionHandler {
         LOGGER.error("An error occurred while sending email", e);
         // You can customize the response as needed
         ErrorResponse response = ErrorResponse.builder()
-                .errorCode("400")
+                .errorCode(400)
                 .message(e.getMessage())
                 .details(e.getMessage())
                 .timestamp(java.time.LocalDateTime.now().toString())
