@@ -28,5 +28,16 @@ public class EmailTemplateController {
          return ResponseEntity.ok("Email template created successfully");
      }
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+     public ResponseEntity<?> create() {
+            logger.info("Creating email template");
+            EmailTemplateDTO emailTemplateDTO = new EmailTemplateDTO();
+           /* emailTemplateDTO.setId("user.email.verification.failed");
+            emailTemplateDTO.setName("User Email Verification Failed");
+            emailTemplateDTO.setTemplateContent(EmailConstant.VERIFICATION_FAILED);
+            emailTemplateDTO.setApplicationName("Authentication Service");*/
+            emailTemplateService.createEmailTemplate(emailTemplateDTO);
+         return ResponseEntity.ok("success");
+     }
 
 }
